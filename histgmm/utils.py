@@ -28,3 +28,9 @@ def multidimensional_linspace(X: np.array, n_points: int) -> np.array:
     of the input array with n_points."""
     elements = np.linspace(np.min(X, axis=0), np.max(X, axis=0), n_points)
     return elements
+
+
+def variance_for_n_std_for_all_range(X: np.ndarray, n_std: float=4) -> np.ndarray:
+    """Compute a variance such that `n_std` standard deviations 
+    will occupy the full range of the data."""
+    return ((X.max() - X.min())/n_std)**2

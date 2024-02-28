@@ -4,7 +4,7 @@ import numpy as np
 from scipy import stats
 import logging
 
-from histgmm.utils import multidimensional_linspace
+from histgmm.utils import multidimensional_linspace, variance_for_n_std_for_all_range
 
 
 logger = logging.getLogger("histgmm")
@@ -85,7 +85,6 @@ class HistogramGMM:
         """Update the responsibilities (r) of each cluster."""
         for cluster in range(self.n_components):
             self._compute_unnormalized_responsabilities(cluster)
-
         self._normalize_responsabilities()
 
     def _m_step(self):
@@ -151,7 +150,11 @@ class HistogramGMM:
 
     def _initialize_parameter_containers(self):
         if self._initial_parameters_are_given():
-            self.means_, self.covariances_, self.weights_ = self.init_params
+            self.means_, self.covariances_, self.weights_ = (
+                self.init_params[0].copy(),
+                self.init_params[1].copy(),
+                self.init_params[2].copy(),
+            )
         else:
             self._automatic_initialization_of_parameters()
 
@@ -164,11 +167,11 @@ class HistogramGMM:
 
     def _automatic_initialization_of_parameters(self):
         self.means_ = multidimensional_linspace(self._X, self.n_components)
-        self.covariances_ = np.zeros((self.n_components, self.n_dims, self.n_dims))
-        self.weights_ = np.zeros(self.n_components)
-        raise NotImplementedError(
-            "Automatic initialization of parameters is not implemented yet. Please provide the parameters manually."
+        cov = variance_for_n_std_for_all_range(self._X)
+        self.covariances_ = np.tile(
+            np.eye(self.n_dims) * cov, (self.n_components, 1, 1)
         )
+        self.weights_ = np.ones(self.n_components) / self.n_components
 
     def _check_parameters_shape(self):
         assert self.means_.shape == (self.n_components, self.n_dims)
