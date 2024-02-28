@@ -169,7 +169,7 @@ class HistogramGMM:
         self.means_ = multidimensional_linspace(self._X, self.n_components)
         cov = variance_for_n_std_for_all_range(self._X)
         self.covariances_ = np.tile(
-            np.eye(self.n_dims) * cov, (self.n_components, 1, 1)
+            np.eye(self.n_dims) * cov, (self.n_components, self.n_dims, self.n_dims)
         )
         self.weights_ = np.ones(self.n_components) / self.n_components
 
