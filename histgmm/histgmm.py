@@ -4,7 +4,7 @@ import numpy as np
 from scipy import stats
 import logging
 
-from utils import multidimensional_linspace
+from histgmm.utils import multidimensional_linspace
 
 
 logger = logging.getLogger("histgmm")

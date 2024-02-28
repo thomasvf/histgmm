@@ -1,4 +1,5 @@
-"""Top-level package for histgmm."""
+from .histgmm import HistogramGMM
+
 
 __author__ = """Thomas Vaitses Fontanari"""
 __email__ = 'tvfontanari@gmail.com'
