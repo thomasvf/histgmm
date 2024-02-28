@@ -13,9 +13,15 @@ def test_histgmm():
     true_variances = np.array([0.1, 0.05, 0.01])
 
     h = (
-        gaussian_1d(x.squeeze(), A=true_amplitudes[0], mu=true_means[0], var=true_variances[0])
-        + gaussian_1d(x.squeeze(), A=true_amplitudes[1], mu=true_means[1], var=true_variances[1])
-        + gaussian_1d(x.squeeze(), A=true_amplitudes[2], mu=true_means[2], var=true_variances[2])
+        gaussian_1d(
+            x.squeeze(), A=true_amplitudes[0], mu=true_means[0], var=true_variances[0]
+        )
+        + gaussian_1d(
+            x.squeeze(), A=true_amplitudes[1], mu=true_means[1], var=true_variances[1]
+        )
+        + gaussian_1d(
+            x.squeeze(), A=true_amplitudes[2], mu=true_means[2], var=true_variances[2]
+        )
     )
 
     weights_0 = np.array([0.5, 0.5, 0.5])
@@ -28,7 +34,9 @@ def test_histgmm():
     )
     histgmm.fit(x, h)
 
-    np.testing.assert_allclose(np.sort(histgmm.means_, axis=0), np.sort(means_0, axis=0), rtol=1e-5, atol=1e-8)
+    np.testing.assert_allclose(
+        np.sort(histgmm.means_, axis=0), np.sort(means_0, axis=0), rtol=1e-5, atol=1e-8
+    )
 
 
 if __name__ == "__main__":

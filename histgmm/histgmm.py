@@ -68,7 +68,7 @@ class HistogramGMM:
             self._delete_temporary_variables()
 
         return self
-    
+
     def _run_em_loop(self):
         while not self._has_converged():
             self._e_step()
