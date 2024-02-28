@@ -35,7 +35,7 @@ def test_histgmm():
     histgmm.fit(x, h)
 
     np.testing.assert_allclose(
-        np.sort(histgmm.means_, axis=0), np.sort(means_0, axis=0), rtol=1e-5, atol=1e-8
+        np.sort(histgmm.means_, axis=0), np.sort(true_means, axis=0), rtol=1e-5, atol=1e-8
     )
 
 
