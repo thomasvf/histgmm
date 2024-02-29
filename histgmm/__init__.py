@@ -1,4 +1,4 @@
-from .histgmm import HistogramGMM
+from .core import HistogramGMM
 
 
 __author__ = """Thomas Vaitses Fontanari"""

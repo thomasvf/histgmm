@@ -4,7 +4,7 @@ import numpy as np
 from scipy import stats
 import logging
 
-from histgmm.utils import multidimensional_linspace, variance_for_n_std_for_all_range
+from .utils import multidimensional_linspace, variance_for_n_std_for_all_range
 
 
 logger = logging.getLogger("histgmm")
@@ -158,6 +158,7 @@ class HistogramGMM:
         else:
             self._automatic_initialization_of_parameters()
 
+        self.amplitudes_ = np.zeros(self.weights_.shape)
         self._check_parameters_shape()
 
     def _initial_parameters_are_given(self):
