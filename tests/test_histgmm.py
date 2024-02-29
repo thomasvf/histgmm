@@ -70,7 +70,3 @@ def test_auto_init():
     np.testing.assert_allclose(
         np.sort(histgmm.covariances_.squeeze(), axis=0), np.sort(true_variances, axis=0), rtol=1e-5, atol=1e-8
     )
-
-
-if __name__ == "__main__":
-    test_histgmm()
