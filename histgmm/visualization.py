@@ -55,7 +55,7 @@ def plot_1d_histogram_and_gaussians(
     if ax is None:
         fig, ax = plt.subplots()
 
-    ax.bar(X.squeeze(), h, width=0.1, color="lightgray")
+    ax.bar(X.squeeze(), h, color="lightgray")
 
     for k in range(gmm.n_components):
         color = plt.cm.viridis(k / gmm.n_components)
