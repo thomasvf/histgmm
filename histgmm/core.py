@@ -84,7 +84,23 @@ class HistogramGMM:
         """
         posterior = self._compute_posterior(X)
         return posterior
+    
+    def predict(self, X):
+        """Predict the most likely cluster for each point X.
 
+        Parameters
+        ----------
+        X : np.ndarray (n_bins, n_dims)
+            N-dimensional position of each bin.
+
+        Returns
+        -------
+        np.ndarray (n_bins, )
+            Most likely cluster for each point X.
+        """        
+        p_x_given_k = self._compute_likelihoods(X)
+        unnormalized_posterior = np.einsum("k,bk->bk", self.weights_, p_x_given_k)
+        return np.argmax(unnormalized_posterior, axis=1)
 
     def _run_em_loop(self):
         while not self._has_converged():
@@ -237,10 +253,7 @@ class HistogramGMM:
             likelihoods[:, cluster] = p_x_given_k
 
         return likelihoods
-
-    def predict(self, X):
-        raise NotImplementedError()
-
+    
     def score(self, X):
         raise NotImplementedError()
 
