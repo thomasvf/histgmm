@@ -102,3 +102,21 @@ def plot_1d_gaussian_fit(
         ax.plot(x_gaussian.squeeze(), y_gaussian, color=color)
 
     return ax
+
+
+def plot_1d_assignments_and_pdfs(
+    gmm: HistogramGMM,
+    X: np.ndarray,
+    h: np.ndarray,
+    ax=None,
+):
+    if ax is None:
+        fig, ax = plt.subplots()
+    
+    y_pred = gmm.predict(X)
+
+    for k in range(gmm.n_components):
+        color = plt.cm.viridis(k / gmm.n_components)
+        ax.plot(X[y_pred == k], h[y_pred == k], "o", color=color)
+
+    return ax
