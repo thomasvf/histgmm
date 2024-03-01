@@ -3,7 +3,7 @@ from histgmm.core import HistogramGMM
 from histgmm.utils import gaussian_1d
 from histgmm.visualization import (
     compute_gaussian_amplitudes_on_histogram,
-    plot_1d_histogram_and_gaussians,
+    plot_1d_gaussian_fit,
 )
 
 
@@ -60,7 +60,9 @@ def test_plot_histogram_and_gaussians():
     histgmm = HistogramGMM(init_params="auto", n_components=3, max_iter=100)
     histgmm.fit(x, h)
 
-    plot_1d_histogram_and_gaussians(histgmm, x, h)
+    plot_1d_gaussian_fit(
+        histgmm, x, h, component_std_extension=5, n_points_for_gaussian=len(x)
+    )
 
 
 if __name__ == "__main__":

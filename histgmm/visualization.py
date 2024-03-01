@@ -41,29 +41,58 @@ def compute_gaussian_amplitudes_on_histogram(
     return amplitudes
 
 
-def plot_1d_histogram_and_gaussians(
+def plot_1d_gaussian_fit(
     gmm: HistogramGMM,
     X: np.ndarray,
     h: np.ndarray,
     ax=None,
     component_std_extension=5,
-    n_points_for_gaussian=100,
+    n_points_for_gaussian=None,
 ):
+    """Plot the fitted gaussian curves scaled to match the histogram.
+
+    Parameters
+    ----------
+    gmm : HistogramGMM
+        Fitted HistogramGMM object
+    X : np.ndarray (n_bins, n_dims)
+        Bin positions of the histogram
+    h : np.ndarray (n_bins, )
+        Histogram
+    ax : plt.Axes, optional
+        Axis where to plot, by default None and creates a new figure
+    component_std_extension : int, optional
+        Extension, in standard deviations from the mean, of the gaussian 
+        curve to be plotted. By default 5.
+    n_points_for_gaussian : int, optional
+        Number of points for the gaussian curve to be plotted. If None, 
+        uses given X. Increase its value to increase the resolution of the
+        gaussian curve. By default None.
+
+    Returns
+    -------
+    plt.Axes
+        Axis where the plot was made
+    """    
     stds = component_std_extension
     amplitudes = compute_gaussian_amplitudes_on_histogram(gmm=gmm, X=X, h=h)
 
     if ax is None:
         fig, ax = plt.subplots()
 
-    ax.bar(X.squeeze(), h, color="lightgray")
+    ax.scatter(X.squeeze(), h, color="lightgray")
 
     for k in range(gmm.n_components):
         color = plt.cm.viridis(k / gmm.n_components)
-        x_gaussian = np.linspace(
-            gmm.means_[k] - stds * np.sqrt(gmm.covariances_[k]),
-            gmm.means_[k] + stds * np.sqrt(gmm.covariances_[k]),
-            n_points_for_gaussian,
-        )
+        if n_points_for_gaussian is not None:
+            x_gaussian = np.linspace(
+                gmm.means_[k] - stds * np.sqrt(gmm.covariances_[k]),
+                gmm.means_[k] + stds * np.sqrt(gmm.covariances_[k]),
+                n_points_for_gaussian,
+            )
+        else:
+            x_gaussian = X.squeeze()
+
         y_gaussian = gaussian_1d(
             x_gaussian.squeeze(),
             amplitudes[k].squeeze(),
@@ -71,5 +100,5 @@ def plot_1d_histogram_and_gaussians(
             gmm.covariances_[k].squeeze(),
         )
         ax.plot(x_gaussian.squeeze(), y_gaussian, color=color)
-
+    plt.show()
     return ax
