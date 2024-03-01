@@ -98,9 +98,9 @@ def test_predict_proba():
     n_zeros = np.sum(scores.argmax(axis=1) == 0)
 
     assert n_zeros == 51
-    assert np.testing.assert_allclose(scores[50], np.array([0.5, 0.5]), rtol=1e-5, atol=1e-5) is None
-    assert np.testing.assert_allclose(scores[75], np.array([0.0, 1.0]), rtol=1e-5, atol=1e-5) is None
-    assert np.testing.assert_allclose(scores[25], np.array([1.0, 0.0]), rtol=1e-5, atol=1e-5) is None
+    np.testing.assert_allclose(scores[50], np.array([0.5, 0.5]), rtol=1e-5, atol=1e-5)
+    np.testing.assert_allclose(scores[75], np.array([0.0, 1.0]), rtol=1e-5, atol=1e-5)
+    np.testing.assert_allclose(scores[25], np.array([1.0, 0.0]), rtol=1e-5, atol=1e-5)
 
 
 if __name__ == "__main__":
