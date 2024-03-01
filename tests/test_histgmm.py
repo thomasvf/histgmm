@@ -6,23 +6,10 @@ from histgmm import HistogramGMM
 from histgmm.utils import gaussian_1d
 
 
-def test_histgmm():
-    x = np.arange(-5, 5, 0.1).reshape((100, 1))
-    true_amplitudes = np.array([2, 0.4, 2])
-    true_means = np.array([[2], [3], [0]])
-    true_variances = np.array([0.1, 0.05, 0.01])
-
-    h = (
-        gaussian_1d(
-            x.squeeze(), A=true_amplitudes[0], mu=true_means[0], var=true_variances[0]
-        )
-        + gaussian_1d(
-            x.squeeze(), A=true_amplitudes[1], mu=true_means[1], var=true_variances[1]
-        )
-        + gaussian_1d(
-            x.squeeze(), A=true_amplitudes[2], mu=true_means[2], var=true_variances[2]
-        )
-    )
+def test_histgmm(gauss_mix_1d_3component):
+    x = gauss_mix_1d_3component["x"]
+    h = gauss_mix_1d_3component["h"]
+    true_means = gauss_mix_1d_3component["true_means"]
 
     weights_0 = np.array([0.5, 0.5, 0.5])
     means_0 = np.array([[0.1], [5], [3]])
@@ -39,23 +26,11 @@ def test_histgmm():
     )
 
 
-def test_auto_init():
-    x = np.arange(-5, 5, 0.1).reshape((100, 1))
-    true_amplitudes = np.array([2, 0.4, 2])
-    true_means = np.array([[2], [3], [0]])
-    true_variances = np.array([0.1, 0.05, 0.01])
-
-    h = (
-        gaussian_1d(
-            x.squeeze(), A=true_amplitudes[0], mu=true_means[0], var=true_variances[0]
-        )
-        + gaussian_1d(
-            x.squeeze(), A=true_amplitudes[1], mu=true_means[1], var=true_variances[1]
-        )
-        + gaussian_1d(
-            x.squeeze(), A=true_amplitudes[2], mu=true_means[2], var=true_variances[2]
-        )
-    )
+def test_auto_init(gauss_mix_1d_3component):
+    x = gauss_mix_1d_3component["x"]
+    h = gauss_mix_1d_3component["h"]
+    true_means = gauss_mix_1d_3component["true_means"]
+    true_variances = gauss_mix_1d_3component["true_variances"]
 
     histgmm = HistogramGMM(
         init_params="auto",
@@ -72,20 +47,9 @@ def test_auto_init():
     )
 
 
-def test_predict_proba():
-    x = np.arange(-5, 5, 0.1).reshape((100, 1))
-    true_amplitudes = np.array([1, 1])
-    true_means = np.array([[-2.5], [2.5]])
-    true_variances = np.array([0.1, 0.1])
-
-    h = (
-        gaussian_1d(
-            x.squeeze(), A=true_amplitudes[0], mu=true_means[0], var=true_variances[0]
-        )
-        + gaussian_1d(
-            x.squeeze(), A=true_amplitudes[1], mu=true_means[1], var=true_variances[1]
-        )
-    )
+def test_predict_proba(gauss_mix_1d_2component):
+    x = gauss_mix_1d_2component["x"]
+    h = gauss_mix_1d_2component["h"]
 
     histgmm = HistogramGMM(
         init_params="auto",
@@ -103,20 +67,9 @@ def test_predict_proba():
     np.testing.assert_allclose(scores[25], np.array([1.0, 0.0]), rtol=1e-5, atol=1e-5)
 
 
-def test_predict():
-    x = np.arange(-5, 5, 0.1).reshape((100, 1))
-    true_amplitudes = np.array([1, 1])
-    true_means = np.array([[-2.5], [2.5]])
-    true_variances = np.array([0.1, 0.1])
-
-    h = (
-        gaussian_1d(
-            x.squeeze(), A=true_amplitudes[0], mu=true_means[0], var=true_variances[0]
-        )
-        + gaussian_1d(
-            x.squeeze(), A=true_amplitudes[1], mu=true_means[1], var=true_variances[1]
-        )
-    )
+def test_predict(gauss_mix_1d_2component):
+    x = gauss_mix_1d_2component["x"]
+    h = gauss_mix_1d_2component["h"]
 
     histgmm = HistogramGMM(
         init_params="auto",
