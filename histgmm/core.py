@@ -5,7 +5,7 @@ from scipy import stats
 import logging
 
 from .utils import multidimensional_linspace, variance_for_n_std_for_all_range
-
+from .convergence import ConvergenceTester
 
 logger = logging.getLogger("histgmm")
 
@@ -18,6 +18,7 @@ class HistogramGMM:
         init_params: Union[str, Tuple[np.ndarray, np.ndarray, np.ndarray]] = "auto",
         max_iter: int = 100,
         tol: float = 1e-3,
+        convergence_tester: ConvergenceTester = ConvergenceTester()
     ):
         """Fit a Gaussian Mixture Model over a histogram.
 
@@ -33,12 +34,16 @@ class HistogramGMM:
             Maximum number of EM steps, by default 100
         tol : float, optional
             Tolerance when comparing floats, by default 1e-3
+        convergence_tester : ConvergenceTester, optional
+            Convergence tester, by default stops when the log-likelihood does not change more than
+            1e-3 for 10 steps.
         """
         self.n_components = n_components
         self.init_params = init_params
         self.max_iter = max_iter
         self.tol = tol
         self.n_dims = n_dimensions
+        self.convergence_tester = convergence_tester
 
     def fit(self, X: np.ndarray, h: np.ndarray):
         """Fit the gaussians to the data
@@ -228,8 +233,18 @@ class HistogramGMM:
         return self._n_steps_passed >= self.max_iter
 
     def _has_converged(self):
-        return False
+        if self.convergence_tester is None:
+            return False
+        
+        log_likelihood = self._compute_log_likelihood()
 
+        self.convergence_tester.add_value(log_likelihood)
+        converged = self.convergence_tester.has_converged()
+        if converged:
+            logger.info("Converged after %d steps. Log-likelihood: %f", self._n_steps_passed, log_likelihood)
+        
+        return converged
+    
     def _compute_unnormalized_responsabilities(self, cluster):
         p_x_given_k = stats.multivariate_normal(
             mean=self.means_[cluster], cov=self.covariances_[cluster]
@@ -253,6 +268,11 @@ class HistogramGMM:
             likelihoods[:, cluster] = p_x_given_k
 
         return likelihoods
+    
+    def _compute_log_likelihood(self):
+        likelihoods = self._compute_likelihoods(self._X)
+        log_likelihood = np.sum(np.log(np.einsum("k,bk->b", self.weights_, likelihoods)))
+        return log_likelihood
     
     def score(self, X):
         raise NotImplementedError()
