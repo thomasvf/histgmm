@@ -100,5 +100,5 @@ def plot_1d_gaussian_fit(
             gmm.covariances_[k].squeeze(),
         )
         ax.plot(x_gaussian.squeeze(), y_gaussian, color=color)
-    plt.show()
+
     return ax
