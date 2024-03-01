@@ -68,6 +68,23 @@ class HistogramGMM:
             self._delete_temporary_variables()
 
         return self
+    
+    def predict_proba(self, X):
+        """Predict the posterior P(k|x) for each cluster k and each point X.
+
+        Parameters
+        ----------
+        X : np.ndarray (n_bins, n_dims)
+            N-dimensional position of each bin.
+
+        Returns
+        -------
+        np.ndarray (n_bins, n_components)
+            Posterior P(k|x) for each cluster k and each point X.
+        """
+        posterior = self._compute_posterior(X)
+        return posterior
+
 
     def _run_em_loop(self):
         while not self._has_converged():
@@ -204,6 +221,23 @@ class HistogramGMM:
         rj = self.weights_[cluster] * p_x_given_k
         self._responsabilities[:, cluster] = rj
 
+    def _compute_posterior(self, X: np.ndarray):
+        """Computer posterior P(k|x) for each cluster k and each point X."""
+        p_x_given_k = self._compute_likelihoods(X)
+        posterior = np.einsum("k,bk->bk", self.weights_, p_x_given_k)
+        posterior = posterior / np.sum(posterior, axis=1, keepdims=True)
+        return posterior
+
+    def _compute_likelihoods(self, X: np.ndarray):
+        likelihoods = np.zeros((X.shape[0], self.n_components))
+        for cluster in range(self.n_components):
+            p_x_given_k = stats.multivariate_normal(
+                mean=self.means_[cluster], cov=self.covariances_[cluster]
+            ).pdf(X)
+            likelihoods[:, cluster] = p_x_given_k
+
+        return likelihoods
+
     def predict(self, X):
         raise NotImplementedError()
 
@@ -214,9 +248,6 @@ class HistogramGMM:
         raise NotImplementedError()
 
     def score_samples(self, X):
-        raise NotImplementedError()
-
-    def predict_proba(self, X):
         raise NotImplementedError()
 
     def aic(self, X):

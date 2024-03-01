@@ -70,3 +70,38 @@ def test_auto_init():
     np.testing.assert_allclose(
         np.sort(histgmm.covariances_.squeeze(), axis=0), np.sort(true_variances, axis=0), rtol=1e-5, atol=1e-8
     )
+
+
+def test_predict_proba():
+    x = np.arange(-5, 5, 0.1).reshape((100, 1))
+    true_amplitudes = np.array([1, 1])
+    true_means = np.array([[-2.5], [2.5]])
+    true_variances = np.array([0.1, 0.1])
+
+    h = (
+        gaussian_1d(
+            x.squeeze(), A=true_amplitudes[0], mu=true_means[0], var=true_variances[0]
+        )
+        + gaussian_1d(
+            x.squeeze(), A=true_amplitudes[1], mu=true_means[1], var=true_variances[1]
+        )
+    )
+
+    histgmm = HistogramGMM(
+        init_params="auto",
+        n_components=2,
+        max_iter=1000
+    )
+    histgmm.fit(x, h)
+
+    scores = histgmm.predict_proba(x)
+    n_zeros = np.sum(scores.argmax(axis=1) == 0)
+
+    assert n_zeros == 51
+    assert np.testing.assert_allclose(scores[50], np.array([0.5, 0.5]), rtol=1e-5, atol=1e-5) is None
+    assert np.testing.assert_allclose(scores[75], np.array([0.0, 1.0]), rtol=1e-5, atol=1e-5) is None
+    assert np.testing.assert_allclose(scores[25], np.array([1.0, 0.0]), rtol=1e-5, atol=1e-5) is None
+
+
+if __name__ == "__main__":
+    test_predict_proba()
