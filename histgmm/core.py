@@ -107,6 +107,31 @@ class HistogramGMM:
         unnormalized_posterior = np.einsum("k,bk->bk", self.weights_, p_x_given_k)
         return np.argmax(unnormalized_posterior, axis=1)
 
+    def aic(self, X: np.ndarray, h: np.ndarray = None) -> float:
+        """Computer the Akaike Information Criterion (AIC) for the model 
+        the data.
+
+        Parameters
+        ----------
+        X : np.ndarray
+            Data points
+        h : np.ndarray, optional
+            Histogram, by default None
+
+        Returns
+        -------
+        float
+            Akaike Information Criterion (AIC) for the model and the data.
+        """
+        n_parameters = self.n_components * (
+            self.n_dims +  # mean
+            self.n_dims * (self.n_dims + 1) / 2  # covariance
+            + 1  # weight
+        )
+
+        model_aic = -2 * self._compute_log_likelihood(X, h) + 2 * n_parameters
+        return float(model_aic)
+    
     def _run_em_loop(self):
         while not self._has_converged():
             self._e_step()
@@ -319,9 +344,6 @@ class HistogramGMM:
         raise NotImplementedError()
 
     def score_samples(self, X):
-        raise NotImplementedError()
-
-    def aic(self, X):
         raise NotImplementedError()
 
     def bic(self, X):

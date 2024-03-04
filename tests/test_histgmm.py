@@ -86,5 +86,24 @@ def test_predict(gauss_mix_1d_2component):
     assert n_ones == 49
 
 
+def test_aic(gauss_mix_1d_2component):
+    x = gauss_mix_1d_2component["x"]
+    h = gauss_mix_1d_2component["h"]
+
+    aic_list = []
+    for k in range(1, 10):
+        histgmm = HistogramGMM(
+            n_components=k,
+            init_params=None,
+            max_iter=200
+        )
+        histgmm.fit(x, h)
+        aic = histgmm.aic(x, h)
+        aic_list.append(aic)
+
+    best_k = np.argmin(aic_list) + 1
+    assert best_k == 2
+
+
 if __name__ == "__main__":
     test_predict()
