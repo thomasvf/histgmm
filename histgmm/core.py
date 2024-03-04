@@ -236,7 +236,7 @@ class HistogramGMM:
         if self.convergence_tester is None:
             return False
         
-        log_likelihood = self._compute_log_likelihood()
+        log_likelihood = self._compute_log_likelihood(self._X, self._h)
 
         self.convergence_tester.add_value(log_likelihood)
         converged = self.convergence_tester.has_converged()
@@ -259,7 +259,19 @@ class HistogramGMM:
         posterior = posterior / np.sum(posterior, axis=1, keepdims=True)
         return posterior
 
-    def _compute_likelihoods(self, X: np.ndarray):
+    def _compute_likelihoods(self, X: np.ndarray) -> np.ndarray:
+        """Compute likelihood P(x|k) for each cluster k and each point X.
+
+        Parameters
+        ----------
+        X : np.ndarray (n_bins, n_dims)
+            Array of data points
+
+        Returns
+        -------
+        np.ndarray (n_bins, n_components)
+            Likelihood P(x|k) for each cluster k and each point X.
+        """
         likelihoods = np.zeros((X.shape[0], self.n_components))
         for cluster in range(self.n_components):
             p_x_given_k = stats.multivariate_normal(
@@ -269,10 +281,33 @@ class HistogramGMM:
 
         return likelihoods
     
-    def _compute_log_likelihood(self):
-        likelihoods = self._compute_likelihoods(self._X)
-        log_likelihood = np.sum(np.log(np.einsum("k,bk->b", self.weights_, likelihoods)))
-        return log_likelihood
+    def _compute_log_likelihood(self, X: np.ndarray, h: np.ndarray=None) -> float:
+        """Compute the log-likelihood of the model over the given data.
+
+        If given, the histogram `h` is used as weights for the log-likelihood of 
+        each position in `X`.
+
+        Parameters
+        ----------
+        X : np.ndarray (n_bins, n_dims)
+            Data points
+        h : np.ndarray, optional
+            Histogram with values associated with each data point, by default None
+
+        Returns
+        -------
+        float
+            Log-likelihood of the model over the given data
+        """
+        likelihoods = self._compute_likelihoods(X)
+        if h is None:
+            log_likelihood = np.sum(np.log(np.einsum("k,bk->b", self.weights_, likelihoods)))
+        else:
+            log_likelihood = np.einsum(
+                "b,b->",
+                np.log(np.einsum("k,bk->b", self.weights_, likelihoods)), h
+            )
+        return float(log_likelihood)
     
     def score(self, X):
         raise NotImplementedError()
