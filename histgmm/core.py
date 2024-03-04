@@ -236,7 +236,7 @@ class HistogramGMM:
         if self.convergence_tester is None:
             return False
         
-        log_likelihood = self._compute_log_likelihood(self._X, self._h)
+        log_likelihood = self._compute_current_log_likelihood()
 
         self.convergence_tester.add_value(log_likelihood)
         converged = self.convergence_tester.has_converged()
@@ -280,6 +280,9 @@ class HistogramGMM:
             likelihoods[:, cluster] = p_x_given_k
 
         return likelihoods
+    
+    def _compute_current_log_likelihood(self):
+        return self._compute_log_likelihood(self._X, self._h)
     
     def _compute_log_likelihood(self, X: np.ndarray, h: np.ndarray=None) -> float:
         """Compute the log-likelihood of the model over the given data.
