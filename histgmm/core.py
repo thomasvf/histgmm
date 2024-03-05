@@ -231,11 +231,17 @@ class HistogramGMM:
 
     def _automatic_initialization_of_parameters(self):
         self.means_ = multidimensional_linspace(self._X, self.n_components)
-        cov = variance_for_n_std_for_all_range(self._X)
-        self.covariances_ = np.tile(
-            np.eye(self.n_dims) * cov, (self.n_components, self.n_dims, self.n_dims)
-        )
+        self.covariances_ = self._compute_initial_covariance_matrices()
         self.weights_ = np.ones(self.n_components) / self.n_components
+
+    def _compute_initial_covariance_matrices(self):
+        cov = variance_for_n_std_for_all_range(self._X)
+        cov_matrix = np.eye(self.n_dims) * cov
+        covariances = np.tile(
+            cov_matrix, (self.n_components, 1, 1)
+        )
+
+        return covariances
 
     def _check_parameters_shape(self):
         assert self.means_.shape == (self.n_components, self.n_dims)
