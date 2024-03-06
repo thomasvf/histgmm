@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-from histgmm.utils import gaussian_1d
+from histgmm.utils import gaussian_1d, isotropic_normal_pdf_on_the_2d_grid
 
 
 @pytest.fixture
@@ -56,6 +56,26 @@ def gauss_mix_1d_2component():
         "true_amplitudes": true_amplitudes,
         "true_means": true_means,
         "true_variances": true_variances,
+    }
+
+    return distribution_data
+
+
+@pytest.fixture
+def gauss_2d_2component():
+    x1, h1 = isotropic_normal_pdf_on_the_2d_grid((-5, -5), (5, 5), [-2.5, -2.5], 0.1)
+    x2, h2 = isotropic_normal_pdf_on_the_2d_grid((-5, -5), (5, 5), [2.5, 2.5], 0.3)
+    assert np.allclose(x1, x2)
+    x = x1.reshape(-1, 2)
+
+    distribution_data = {
+        "x": x,
+        "h": (h1 + h2).reshape(-1),
+        "true_means": np.array([[-2.5, -2.5], [2.5, 2.5]]),
+        "true_covariances": np.array([
+            [[0.1, 0], [0, 0.1]],
+            [[0.3, 0], [0, 0.3]],
+        ])
     }
 
     return distribution_data

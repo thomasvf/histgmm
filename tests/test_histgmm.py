@@ -98,5 +98,18 @@ def test_aic(gauss_mix_1d_2component):
     assert best_k == 2
 
 
+def test_histgmm_2d(gauss_2d_2component):
+    x = gauss_2d_2component["x"]
+    h = gauss_2d_2component["h"]
+    true_means = gauss_2d_2component["true_means"]
+    true_covariances = gauss_2d_2component["true_covariances"]
+
+    histgmm = HistogramGMM(n_components=2, n_dimensions=2, max_iter=100)
+    histgmm.fit(x, h)
+
+    np.testing.assert_allclose(histgmm.means_, true_means, rtol=1e-3, atol=1e-3)
+    np.testing.assert_allclose(histgmm.covariances_, true_covariances, rtol=1e-3, atol=1e-3)
+
+
 if __name__ == "__main__":
     test_predict()
