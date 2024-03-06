@@ -31,7 +31,7 @@ h = gaussian_1d(x, A=0.2, mu=10, var=9) + \
 
 
 # fit using 4 components
-model = HistogramGMM(n_components=4)
+model = HistogramGMM(n_components=4, n_dimensions=1)
 model.fit(x.reshape(-1, 1), h)
 ```
 
