@@ -31,10 +31,10 @@ def multidimensional_linspace(X: np.array, n_points: int) -> np.array:
     return elements
 
 
-def variance_for_n_std_for_all_range(X: np.ndarray, n_std: float=4) -> np.ndarray:
-    """Compute a variance such that `n_std` standard deviations 
+def variance_for_n_std_for_all_range(X: np.ndarray, n_std: float = 4) -> np.ndarray:
+    """Compute a variance such that `n_std` standard deviations
     will occupy the full range of the data."""
-    return ((X.max() - X.min())/n_std)**2
+    return ((X.max() - X.min()) / n_std) ** 2
 
 
 def ndim_normal_pdf(x: np.ndarray, mu: np.ndarray, cov: np.ndarray) -> np.ndarray:
@@ -54,8 +54,10 @@ def ndim_normal_pdf(x: np.ndarray, mu: np.ndarray, cov: np.ndarray) -> np.ndarra
     np.ndarray
         Normal pdf value at the specified points
     """
-    assert x.shape[-1] == len(mu), "last x dimension and mu must match"   
-    assert x.shape[-1] == cov.shape[0], "last x dimension must match with cov dimensions"
+    assert x.shape[-1] == len(mu), "last x dimension and mu must match"
+    assert (
+        x.shape[-1] == cov.shape[0]
+    ), "last x dimension must match with cov dimensions"
 
     rv = stats.multivariate_normal(mean=mu, cov=cov)
     return rv.pdf(x)
@@ -82,7 +84,9 @@ def ndim_isotropic_normal_pdf(x: np.ndarray, mu: np.ndarray, var: float) -> np.n
     return ndim_normal_pdf(x, mu, cov)
 
 
-def isotropic_normal_pdf_on_the_2d_grid(min_x: np.ndarray, max_x: np.ndarray, mu: np.ndarray, var:float):
+def isotropic_normal_pdf_on_the_2d_grid(
+    min_x: np.ndarray, max_x: np.ndarray, mu: np.ndarray, var: float
+):
     """Sample a isotropic normal distribution with mean `mu` and variance `var` on a 2D grid
     defined by `min_x` and `max_x`.
 
@@ -102,7 +106,7 @@ def isotropic_normal_pdf_on_the_2d_grid(min_x: np.ndarray, max_x: np.ndarray, mu
     (np.ndarray, np.ndarray)
         Coordinates of each matrix element and normal pdf values at the specified points
     """
-    x, y = np.mgrid[min_x[0]:max_x[0]:0.1, min_x[1]:max_x[1]:0.1]
+    x, y = np.mgrid[min_x[0] : max_x[0] : 0.1, min_x[1] : max_x[1] : 0.1]
     pos = np.dstack((x, y))
     probs = ndim_isotropic_normal_pdf(pos, mu, var)
     return (pos, probs)
