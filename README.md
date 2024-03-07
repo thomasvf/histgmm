@@ -59,7 +59,7 @@ plt.show()
 This code adapts the EM for Gaussian Mixture Models found in Bishop's 2006 book to work with histograms.
 
 Essentially, we work with bins instead of examples, and each bin is associated with a certain number of examples indicated by the histogram.
-That is, $\mathbf{x}_b$ gives the $M-$dimensional position of bin $b$, and $h_b$ is the number of examples in that bin (that is, that have this same position).
+That is, $\mathbf{x}_b$ gives the $M-$ dimensional position of bin $b$, and $h_b$ is the number of examples in that bin (that is, that have this same position).
 We then only need to change the summations so that they emulate the iteration over all the examples in a bin.
 Since all bins have the same position, this simply means multiplying the summed term by the appropriate value in $h_b$.
 
