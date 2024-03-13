@@ -5,13 +5,8 @@ Welcome to histgmm's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-   readme
-   installation
-   usage
-   modules
-   contributing
-   authors
-   history
+   histgmm
+   api
 
 Indices and tables
 ==================
