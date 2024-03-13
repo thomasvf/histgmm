@@ -42,7 +42,7 @@ def ndim_normal_pdf(x: np.ndarray, mu: np.ndarray, cov: np.ndarray) -> np.ndarra
 
     Parameters
     ----------
-    x : np.ndarray (*, n_dims)
+    x : np.ndarray (, n_dims)
         Points where to compute the gaussian curve
     mu : np.ndarray (n_dims, )
         Mean of the gaussian
@@ -68,7 +68,7 @@ def ndim_isotropic_normal_pdf(x: np.ndarray, mu: np.ndarray, var: float) -> np.n
 
     Parameters
     ----------
-    x : np.ndarray (*, n_dims)
+    x : np.ndarray (, n_dims)
         Points where to compute the gaussian curve
     mu : np.ndarray (n_dims, )
         Mean of the gaussian

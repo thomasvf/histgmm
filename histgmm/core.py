@@ -11,6 +11,7 @@ logger = logging.getLogger("histgmm")
 
 
 class HistogramGMM:
+    """Fit a Gaussian Mixture Model over a histogram."""    
     def __init__(
         self,
         n_components: Union[int, str] = 2,
@@ -20,7 +21,7 @@ class HistogramGMM:
         tol: float = 1e-3,
         convergence_tester: ConvergenceTester = ConvergenceTester()
     ):
-        """Fit a Gaussian Mixture Model over a histogram.
+        """Build a new HistogramGMM model.
 
         Parameters
         ----------
@@ -50,9 +51,9 @@ class HistogramGMM:
 
         Parameters
         ----------
-        X : np.ndarray (n_bins, n_dims)
+        X : np.ndarray of shape (n_bins, n_dims)
             N-dimensional position of each bin.
-        h : np.ndarray (n_bins, )
+        h : np.ndarray of shape (n_bins, )
             Number of counts in each bin.
 
         Returns
