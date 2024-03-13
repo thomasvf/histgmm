@@ -3,6 +3,8 @@ A Gaussian Mixture Model implementation that works with a histogram instead of u
 
 This implementation is useful for fitting data that has the form of a sum of gaussian curves, but it can also be used as a typical GMM implementation by computing a histogram of data points.
 
+- **Documentation**: https://histgmm.readthedocs.io/en/latest/histgmm.html
+
 ## Installation
 As of now, this is not on PyPI, so the easiest way to install it is by cloning this repo and then installing it with pip:
 ```shell
